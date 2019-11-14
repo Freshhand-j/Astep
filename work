@@ -31,7 +31,7 @@ config_user_file="${config_folder}/user-config.json"
 ssr_log_file="${ssr_ss_file}/ssserver.log"
 jq_file="${ssr_folder}/jq"
 ssr_manage_file="/etc/init.d/ssr"
-
+ssr_log_file="${ssr_ss_file}/ssserver.log"
 
 
 #---------------------暂时测试目录------------------------------
@@ -523,7 +523,7 @@ function Modify_config(){
 		;;
 		2)
 		Set_config_password
-		Modefy_config_password
+		Modify_config_password
 		;;
 		3)
 		Set_config_method
@@ -687,9 +687,9 @@ function dependency_install(){
 			echo -e "${NOTICE}Python is not installed,start installation...${suffix}" && apt-get install -y python
 		else
 			echo -e "${INFO}Python has been installed${suffix}"
-			echo "--------------"
+			echo "---------------"
 			`python --version` 
-			echo "--------------"
+			echo "---------------"
 		fi
 		#------------------check python----------------------#
 
@@ -770,10 +770,23 @@ Restart_SSR(){
 
 
 #查看日志
-#function View_log(){}	
+function View_log(){
+	SSR_installation_status
+	[[ ! -e ${ssr_log_file} ]] && echo -e "${Error} ShadowsocksR日志文件不存在 !" && exit 1
+	cat "${ssr_log_file}"
+	sleep 5
+}
 
 
 
+#更新脚本
+function Update_Script(){
+	echo
+	echo
+	wget -N --no-check-certificate https://raw.githubusercontent.com/Freshhand-j/Astep/master/work && chmod +x work && bash work
+	echo -e "${INFO}已更新到最新版本（覆盖运行）${suffix}"
+
+}
 
 
 
@@ -806,25 +819,27 @@ function Main_window(){
 	echo -e "		\t\t--Version:[${blue}V${version}${suffix}]--Author:[${blue}wwj${suffix}]"
 
 	echo -e "\t——————————————"
-	echo -e "${green}\t1.${suffix}Install ShadowsocksR"
+		echo -e "${green}\t1.${suffix}Install ShadowsocksR"
 
-	echo -e "${green}\t2.${suffix}Start ShadowsocksR"
+		echo -e "${green}\t2.${suffix}Start ShadowsocksR"
 
-	echo -e "${green}\t3.${suffix}Stop ShadowsocksR"
+		echo -e "${green}\t3.${suffix}Stop ShadowsocksR"
 
 	echo -e "\t——————————————"
 
-	echo -e "${green}\t4.${suffix}Restart ShadowsocksR"
+		echo -e "${green}\t4.${suffix}Restart ShadowsocksR"
 
-	echo -e "${green}\t5.${suffix}Modify configuration"
+		echo -e "${green}\t5.${suffix}Modify configuration"
 
-	echo -e "${green}\t6.${suffix}View all information"
+		echo -e "${green}\t6.${suffix}View all information"
+
 	echo -e "\t——————————————"
-	echo -e "${green}\t7.${suffix}Uninstall SSR"
 
-	echo -e "${green}\t8.${suffix}Other functions"
+		echo -e "${green}\t7.${suffix}Uninstall SSR"
 
-	echo -e "${red}\t0.${suffix}Quit"
+		echo -e "${green}\t8.${suffix}Other functions"
+
+		echo -e "${red}\t0.${suffix}Quit"
 	
 	echo -e "\t——————————————"
 
@@ -842,7 +857,7 @@ function Main_window(){
 
 	echo
 	echo
-	read -e -p "	Enter a number[0-5]:" choice
+	read -e -p "	Enter a number[0-8]:" choice
 	case "${choice}" in
 		0)
 		exit 1
@@ -876,19 +891,20 @@ function Main_window(){
 			echo
 			echo
 			#echo -e "${NOTICE}以下功能暂未实现！${suffix}" && echo
-
+			echo && echo -e "\t   Option Menu"
+	echo -e "\t——————————"
 			echo -e "${green}\t1.${suffix}更新 ShadowsocksR"
 
 			echo -e "${green}\t2.${suffix}卸载 ShadowsocksR"
-
+	echo -e "\t——————————"
 			echo -e "${green}\t3.${suffix}安装 libsodium"
 
 			echo -e "${green}\t4.${suffix}显示 连接信息"
-
+	echo -e "\t——————————"
 			echo -e "${green}\t5.${suffix}查看 日志"
 
 			echo -e "${green}\t6.${suffix}升级"
-
+	echo -e "\t——————————"
 			echo -e "${red}\t0.${suffix}返回上一级"
 			
 			echo
@@ -897,7 +913,7 @@ function Main_window(){
 			read -e -p "请输入数字[0-6]:" choice_addition
 			case "${choice_addition}" in
 				0)
-				exit 1
+				Main_window
 				;;
 				1)
 				echo -e "ShadowsocksR 已停止更新"
